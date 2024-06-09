@@ -1,10 +1,13 @@
 import { Hono } from "hono";
 import { html } from "hono/html";
 
-const app = new Hono();
+type Bindings = {
+	ZIP_LINK: string;
+};
 
-const zipLink: string = "https://hono-multiple-download-sample.pages.dev/static/image000.png.zip";
-const downloadNum: number = 3;
+const app = new Hono<{ Bindings: Bindings }>();
+
+const downloadNum: number = 2;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const Layout = (props: { title: string; script: any; children: any }) => html`<!DOCTYPE html>
@@ -69,7 +72,7 @@ app.get("/use-anchor", async (c) => {
         for (let i = 0; i < ${downloadNum}; i++) {
           const anchor = document.createElement('a');
           anchor.id = "download-anchor-" + i;
-          anchor.href = "${zipLink}";
+          anchor.href = "${c.env.ZIP_LINK}";
           anchor.download = '';
           anchor.style.display = 'none';
           document.body.appendChild(anchor);
@@ -97,7 +100,7 @@ app.get("/use-anchor-without-remove", async (c) => {
           const anchor = document.createElement('a');
           anchor.id = "download-anchor-" + i;
           anchor.class = "download-anchor";
-          anchor.href = "${zipLink}";
+          anchor.href = "${c.env.ZIP_LINK}";
           anchor.download = '';
           anchor.style.display = 'none';
           document.body.appendChild(anchor);
@@ -119,7 +122,7 @@ app.get("/use-anchor-with-wait", async (c) => {
         for (let i = 0; i < ${downloadNum}; i++) {
           const anchor = document.createElement('a');
           anchor.id = "download-anchor-" + i;
-          anchor.href = "${zipLink}";
+          anchor.href = "${c.env.ZIP_LINK}";
           anchor.download = '';
           anchor.style.display = 'none';
           document.body.appendChild(anchor);
@@ -149,7 +152,7 @@ app.get("/use-iframe", async (c) => {
         for (let i = 0; i < ${downloadNum}; i++) {
           const iframe = document.createElement('iframe');
           iframe.id = "download-inframe-" + i;
-          iframe.src = "${zipLink}";
+          iframe.src = "${c.env.ZIP_LINK}";
           iframe.style.display = 'none';
           iframe.sandbox = 'allow-downloads';
           document.body.appendChild(iframe);
